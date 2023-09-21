@@ -2,6 +2,34 @@
 
 This project is a solution to the FeedMe technical task. It involves processing data from a mock proprietary feed service, transforming it into a structured JSON format, storing it in a MongoDB database, and displaying it on a web interface.
 
+## Technology Choices
+
+In the development of this project, several critical technology choices were made:
+
+1. **Node.js with Express**:
+    - Given the need to handle real-time data feeds and serve a web front-end, Node.js provides an efficient, scalable, and modern platform. Express simplifies the creation of the web server and API.
+
+2. **MongoDB**:
+    - A NoSQL database was a natural choice due to the flexible nature of the feed's data. MongoDB allows for quick writes and has a flexible schema to accommodate any unexpected data changes.
+
+3. **RabbitMQ**:
+    - When processing real-time data feeds, especially in scenarios where we might experience bursts of data, having a buffer like RabbitMQ allows us to decouple the data reception from the data processing. This ensures that no data is lost, even if processing temporarily falls behind the rate of data reception.
+
+4. **Docker & Docker-Compose**:
+    - Docker allows us to package our application with all its dependencies, ensuring consistency across all environments. Docker-Compose further simplifies the setup by allowing us to define and run multi-container applications, making it easier to manage services like MongoDB and RabbitMQ.
+
+5. **Native JavaScript for Frontend**:
+    - While libraries and frameworks like React or Vue might offer more advanced features, for the scope of this project, plain JavaScript was sufficient to fetch and display the data. It also ensures fewer dependencies and a faster loading time.
+
+6. **Jest for Testing**:
+    - Jest provides a comprehensive testing solution. Its easy setup, rich matchers, and clean syntax make writing tests straightforward.
+
+7. **Cors**:
+    - Due to potential cross-origin restrictions in modern browsers, the `cors` middleware for Express ensures that our frontend can successfully fetch data from our backend API without encountering CORS policy issues.
+
+These choices were made with scalability, maintainability, and performance in mind, ensuring that the solution is not only functional but also efficient and robust.
+
+
 ## Project Structure
 
 ```plaintext

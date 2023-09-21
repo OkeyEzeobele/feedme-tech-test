@@ -1,23 +1,143 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <title>FeedMe Data Display</title>
+    <style>
+        body {
+            background-color: white;
+            color: #333;
+        }
+
+        .event-box {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            transition: transform 0.2s;
+        }
+
+        .event-box:hover {
+            transform: scale(1.05);
+            cursor: pointer;
+        }
+
+        .event-header {
+            background: linear-gradient(to right, var(--glossyBlue), var(--glossyRed));
+            color: white;
+            padding: 10px;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+        }
+
+        .event-body {
+            padding: 10px;
+        }
+
+        :root {
+            --glossyRed: #f70706;
+            --glossyBlue: #1c3d8c;
+        }
+    </style>
+
 </head>
+
 <body>
-    <h1>Data from FeedMe</h1>
-    <div id="data"></div>
+    <div class="container mt-5">
+        <h1 class="mb-4 text-center">Events</h1>
+        <div id="data" class="row"></div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script>
-        // Fetch data from the server and display it
         fetch('/data')
             .then(response => response.json())
             .then(data => {
                 const dataDiv = document.getElementById('data');
-                dataDiv.innerHTML = JSON.stringify(data, null, 2);
+                let content = "";
+
+                data.forEach(event => {
+                    function capitalizeFirstLetter(string) {
+                        return string.charAt(0).toUpperCase() + string.slice(1);
+                    }
+                    // Only consider items with displayed: true and suspended: false
+                    if (event.body.displayed && !event.body.suspended) {
+                        function formatDate(timestamp) {
+                            const eventDate = new Date(Number(timestamp));
+                            const today = new Date();
+                            const tomorrow = new Date(today);
+                            tomorrow.setDate(today.getDate() + 1);
+
+                            const hoursMinutes = eventDate.toLocaleTimeString('en-GB', {
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            });
+
+                            if (
+                                eventDate.getDate() === today.getDate() &&
+                                eventDate.getMonth() === today.getMonth() &&
+                                eventDate.getFullYear() === today.getFullYear()
+                            ) {
+                                return `${hoursMinutes} Today`;
+                            } else if (
+                                eventDate.getDate() === tomorrow.getDate() &&
+                                eventDate.getMonth() === tomorrow.getMonth() &&
+                                eventDate.getFullYear() === tomorrow.getFullYear()
+                            ) {
+                                return `${hoursMinutes} Tomorrow`;
+                            } else {
+                                return `${eventDate.toLocaleDateString('en-GB', {
+                                    day: '2-digit',
+                                    month: '2-digit'
+                                })} at ${hoursMinutes}`;
+                            }
+                        }
+                        const parsedDate = formatDate(event.header.timestamp);
+                        content += `
+                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                        <div class="event-box" data-toggle="modal" data-target="#event-${event.header.msgId}">
+                            <div class="event-header d-flex justify-content-between">
+                                <span>Type: ${capitalizeFirstLetter(event.header.type || 'N/A')}</span>
+                              
+                            </div>
+                            <div class="event-body d-flex justify-content-between">
+                                <span>${event.body.name || 'N/A'}</span>
+                                <span>@${event.body.price || 'N/A'}</span>
+                            </div>
+                        </div>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="event-${event.header.msgId}" tabindex="-1" role="dialog" aria-labelledby="eventLabel-${event.header.msgId}" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="eventLabel-${event.header.msgId}">${event.body.name}</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        ${JSON.stringify(event, null, 2)}
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+                    }
+                });
+
+                dataDiv.innerHTML = `<div class="container"><div class="row">${content}</div></div>`;
             });
+
+
     </script>
 </body>
+
 </html>

@@ -34,7 +34,11 @@ async function startClient() {
           .toString()
           .split(/(?=\|\d+\|(create|update)\|)/);
         for (const potentialPacket of potentialPackets) {
-          if (potentialPacket) {
+          if (
+            potentialPacket &&
+            potentialPacket !== "create" &&
+            potentialPacket !== "update"
+          ) {
             const rawData = potentialPacket;
             console.log("Raw Data:", rawData);
 

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>FeedMe Data Display</title>
+</head>
+<body>
+    <h1>Data from FeedMe</h1>
+    <div id="data"></div>
+
+    <script>
+        // Fetch data from the server and display it
+        fetch('/data')
+            .then(response => response.json())
+            .then(data => {
+                const dataDiv = document.getElementById('data');
+                dataDiv.innerHTML = JSON.stringify(data, null, 2);
+            });
+    </script>
+</body>
+</html>

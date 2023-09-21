@@ -1,0 +1,27 @@
+{
+  "name": "feedme-tech-test",
+  "version": "1.0.0",
+  "description": "The FeedMe tech test comes with a mock data feed service that represents one of the many types of data feeds we have to process everyday at Sky Bet.",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "start-tcpClient": "node src/tcp/tcpClient.js",
+    "start-queueConsumer": "node src/queue/queueConsumer.js",
+    "start-server": "node src/server.js",
+    "start": "npm-run-all --parallel start-tcpClient start-queueConsumer start-server"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "mongodb-memory-server": "^8.15.1",
+    "npm-run-all": "^4.1.5"
+  },
+  "dependencies": {
+    "amqplib": "^0.10.3",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "mongodb": "^6.1.0"
+  }
+}
